@@ -3,3 +3,5 @@ tkinter
 pillow
 pylint
 black
+pytube
+tqdm
