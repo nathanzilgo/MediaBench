@@ -31,8 +31,9 @@ class ImageCompressor(MediaProcessor):
             "input": {
                 "flags": ["-i", "--input"],
                 "type": str,
+                "nargs": "+",
                 "required": True,
-                "help": "Path to the input folder containing images",
+                "help": "Path(s) to input image files or folders",
             },
             "output": {
                 "flags": ["-o", "--output"],
@@ -50,29 +51,46 @@ class ImageCompressor(MediaProcessor):
 
     def process(
         self,
-        input_folder: str,
+        input_paths: List[str],
         output_folder: str,
         quality: int = 85,
         **kwargs,
     ) -> ProcessingResult:
-        """Compress all images in input_folder and save to output_folder."""
-        if not os.path.exists(input_folder):
-            return ProcessingResult(
-                success=False,
-                message=f"Input folder {input_folder} does not exist.",
-            )
+        """Compress images from input paths and save to output_folder."""
+        # Handle case where single string is passed (e.g. from direct call)
+        if isinstance(input_paths, str):
+            input_paths = [input_paths]
 
         os.makedirs(output_folder, exist_ok=True)
-        original_size = self._calculate_folder_size(input_folder)
+
+        # Calculate total original size
+        original_size = 0
+        for path in input_paths:
+            if os.path.isfile(path):
+                original_size += os.path.getsize(path)
+            elif os.path.isdir(path):
+                original_size += self._calculate_folder_size(path)
 
         try:
-            self._compress_folder(input_folder, output_folder, quality)
+            for path in input_paths:
+                if os.path.isfile(path):
+                    if path.lower().endswith(self.SUPPORTED_EXTENSIONS):
+                        print(f"Compressing {os.path.basename(path)}.")
+                        output_path = os.path.join(
+                            output_folder, os.path.basename(path)
+                        )
+                        self._compress_single_image(path, output_path, quality)
+                elif os.path.isdir(path):
+                    self._compress_folder(path, output_folder, quality)
+                else:
+                    print(f"Path not found: {path}")
+
             processed_size = self._calculate_folder_size(output_folder)
 
             return ProcessingResult(
                 success=True,
                 message="Image compression completed successfully.",
-                input_path=input_folder,
+                input_path=", ".join(input_paths),
                 output_path=output_folder,
                 original_size=original_size,
                 processed_size=processed_size,

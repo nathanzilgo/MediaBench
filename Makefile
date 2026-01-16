@@ -3,6 +3,9 @@ default: install run
 run:
 	python -m src.main
 
+run-gui:
+	python -m src.main_gui
+
 install:
 	pip uninstall -y moviepy && pip install --no-cache-dir --upgrade -r requirements.txt
 

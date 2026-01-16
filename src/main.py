@@ -98,7 +98,7 @@ class MediaBenchCLI:
 
         # Map CLI arg names to method parameter names
         arg_mapping = {
-            "input": "input_folder" if "compress-images" in command else "input_file",
+            "input": "input_paths" if "compress-images" in command else "input_file",
             "output": "output_folder" if "compress-images" in command else "output_dir",
         }
 

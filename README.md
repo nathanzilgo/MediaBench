@@ -10,6 +10,20 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Native GUI
+
+To run the native desktop interface:
+
+```bash
+# Using Makefile
+make run-gui
+
+# Or directly with python
+python -m src.main_gui
+```
+
+### CLI Usage
+
 ```bash
 # Show all available commands
 python -m src.main
