@@ -1,5 +1,10 @@
+default: install run
+
+run:
+	python -m src.main
+
 install:
-	pip install -r requirements.txt
+	pip uninstall -y moviepy && pip install --no-cache-dir --upgrade -r requirements.txt
 
 clean:
 	rm -rf dist/

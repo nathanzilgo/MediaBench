@@ -1,5 +1,6 @@
-moviepy
-tkinter
+moviepy<2.0.0
 pillow
 pylint
 black
+pytube
+tqdm
